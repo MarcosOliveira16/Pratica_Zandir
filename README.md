@@ -106,11 +106,33 @@ Gera um gráfico de barras para representar o número de atendimentos por motivo
 
 ```python
 import matplotlib.pyplot as plt
+import numpy as np
 
-motivos = atendimento['motivo'].value_counts()
-motivos.plot(kind='bar', title='Número de Atendimentos por Motivo')
-plt.xlabel('Motivo')
-plt.ylabel('Número de Atendimentos')
+fonte = {
+    'family': 'DejaVu Sans Mono', # fonte
+    'color':  'black', # cor
+    'weight': 'bold', # estilo - negrito
+    'size': 15, # tamanho
+}
+
+x = atendimento['motivo'].groupby(atendimento['motivo']).count().index
+y = atendimento['motivo'].groupby(atendimento['motivo']).count()
+
+# alterando resolução para melhor exibição do eixo 'x' (motivos)
+plt.figure(figsize=(10, 10))
+
+# limitando o eixo 'y' (melhor visualização)
+plt.ylim(0, 5)
+
+# criando um gráfico de barras (eixo x, eixo y)
+plt.bar(x, y)
+# título
+plt.title('Atendimentos por motivo', fontdict=fonte)
+# nome do eixo 'x'
+plt.xlabel('Motivo', fontdict=fonte)
+# nome do eixo 'y'
+plt.ylabel('Número de atendimentos', fontdict=fonte)
+# gera o gráfico
 plt.show()
 ```
 
@@ -120,13 +142,41 @@ Gera um gráfico de linha mostrando a tendência de vendas dos últimos seis mes
 
 ```python
 import matplotlib.pyplot as plt
+import numpy as np
 
-# Supondo que a coluna 'data_venda' está no formato datetime
+fonte = {
+    'family': 'DejaVu Sans Mono', # fonte
+    'color':  'black', # cor
+    'weight': 'bold', # estilo - negrito
+    'size': 15, # tamanho
+}
+
+# Converter a coluna 'data_venda' para o tipo datetime
 vendas['data_venda'] = pd.to_datetime(vendas['data_venda'])
-vendas_mensal = vendas.set_index('data_venda').resample('M').sum()
-vendas_mensal['valor_venda'].plot(kind='line', title='Tendência de Vendas nos Últimos 6 Meses')
-plt.xlabel('Data')
-plt.ylabel('Valor de Vendas')
+
+# Extrair o nome do mês
+vendas['mes'] = vendas['data_venda'].dt.strftime('%B')
+
+# Agrupar por mês e contar o número de vendas
+vendas_por_mes = vendas.groupby('mes').size().reindex([
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+], fill_value=0) # 'fill_value' preenche as entradas onde os dados são ausentes, no caso como apenas o mês de setembro possui entrada
+# os demais vão aparecer mesmo sem receber valor algum, permitindo a exibição da 'tendência de vendas' de maneria mais clara
+
+# Definir os eixos x (mês) e y (número de vendas)
+x = vendas_por_mes.index
+y = vendas_por_mes.values
+
+# alterando resolução para melhor exibição do eixo 'x' (motivos)
+plt.figure(figsize=(12, 12))
+
+plt.plot(x, y, marker='o')  # 'maker' adiciona marcadores nos pontos
+# 'loc' posição no gráfico, 'x' e 'y' posição mais específica
+plt.title('Vendas por mês', loc='left', y=0.96, x=0.01, fontdict=fonte)
+plt.xlabel('Mês', fontdict=fonte)
+plt.ylabel('Número de vendas', fontdict=fonte)
+
 plt.show()
 ```
 
