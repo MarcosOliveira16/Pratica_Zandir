@@ -168,7 +168,7 @@ vendas_por_mes = vendas.groupby('mes').size().reindex([
 x = vendas_por_mes.index
 y = vendas_por_mes.values
 
-# alterando resolução para melhor exibição do eixo 'x' (motivos)
+# alterando resolução para melhor exibição do eixo 'x' (mês)
 plt.figure(figsize=(12, 12))
 
 plt.plot(x, y, marker='o')  # 'maker' adiciona marcadores nos pontos
